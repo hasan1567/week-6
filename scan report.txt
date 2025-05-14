@@ -1,0 +1,104 @@
+================================================================================
+                    OWASP ZAP Security Assessment Report
+================================================================================
+
+Report Title:      Web Application Security Assessment - NodeGoat
+Target URL:        http://localhost:4000
+Scan Type:         Passive + Active Scan (Manual Initiation)
+Scanner:           OWASP ZAP v2.16.1
+Date of Scan:      May 14, 2025
+Conducted By:      [Your Name] - Cybersecurity Intern
+Environment:       Kali Linux (VM) with local NodeGoat app on port 4000
+
+--------------------------------------------------------------------------------
+1. Executive Summary
+--------------------------------------------------------------------------------
+
+The purpose of this assessment was to identify vulnerabilities in the NodeGoat
+web application by conducting a full passive and active scan using OWASP ZAP.
+The scan targeted the local instance running on http://localhost:4000.
+
+Multiple medium and low-risk vulnerabilities were detected during the scan. No
+high or critical vulnerabilities were found in this test session.
+
+--------------------------------------------------------------------------------
+2. Summary of Findings
+--------------------------------------------------------------------------------
+
+| Risk Level | Number of Issues | Description                          |
+|------------|------------------|--------------------------------------|
+| Medium     |        3         | Clickjacking, Missing Headers        |
+| Low        |        4         | Info Disclosure, Outdated Headers    |
+| Informational |     5         | Server Leaks, Allowed Methods        |
+
+--------------------------------------------------------------------------------
+3. Key Vulnerabilities Identified
+--------------------------------------------------------------------------------
+
+➤ **1. Missing Anti-Clickjacking Header (X-Frame-Options)**
+- Risk: Medium
+- Description: The response does not include the X-Frame-Options header.
+  This makes the application vulnerable to clickjacking attacks.
+- Recommendation: Add the `X-Frame-Options: DENY` or `SAMEORIGIN` header.
+
+➤ **2. Missing X-Content-Type-Options Header**
+- Risk: Medium
+- Description: This header helps to prevent MIME type sniffing. Without it,
+  browsers might interpret files differently, opening up XSS risks.
+- Recommendation: Add `X-Content-Type-Options: nosniff`.
+
+➤ **3. Server Leaking "X-Powered-By" Header**
+- Risk: Low
+- Description: The application is leaking the "X-Powered-By: Express" header.
+  This gives attackers insights into backend technology.
+- Recommendation: Remove or suppress this header.
+
+➤ **4. Allowed HTTP Methods: GET, HEAD**
+- Risk: Informational
+- Description: These methods are typically safe, but full method disclosure
+  may help attackers understand server behavior.
+- Recommendation: Limit to only necessary methods. Avoid supporting TRACE or OPTIONS in production.
+
+➤ **5. Redirect to Login Page Without Session**
+- Risk: Low
+- Description: Multiple 302 redirects to the login page were observed.
+  While not a direct vulnerability, excessive unauthenticated access logging
+  may cause log pollution.
+- Recommendation: Ensure proper session management and log throttling.
+
+--------------------------------------------------------------------------------
+4. Tools and Environment
+--------------------------------------------------------------------------------
+
+- OWASP ZAP v2.16.1
+- Kali Linux 2025 Rolling (VM)
+- NodeGoat vulnerable app (localhost:4000)
+- MongoDB backend, Node.js/Express stack
+
+--------------------------------------------------------------------------------
+5. Conclusion
+--------------------------------------------------------------------------------
+
+The assessment of NodeGoat using OWASP ZAP revealed several low-to-medium
+risk issues primarily related to missing security headers and information
+disclosure. No critical vulnerabilities were detected.
+
+It is recommended that the identified issues be addressed as part of a
+security hardening effort before deployment into a production environment.
+
+--------------------------------------------------------------------------------
+6. Recommendations Summary
+--------------------------------------------------------------------------------
+
+- Implement standard HTTP security headers:
+  - `X-Frame-Options`
+  - `X-Content-Type-Options`
+  - `Content-Security-Policy`
+  - `Strict-Transport-Security` (if HTTPS is enabled)
+- Suppress server framework headers (e.g., "X-Powered-By")
+- Limit unnecessary HTTP methods
+- Monitor and sanitize unauthenticated requests
+
+================================================================================
+End of Report
+================================================================================

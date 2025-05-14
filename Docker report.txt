@@ -1,0 +1,1 @@
+"I used Dockle, a container image linter, to audit the NodeGoat Docker image. The scan revealed missing best practices like HEALTHCHECK, lack of Docker content trust, and unnecessary test files within the final image. Based on the results, I updated the Dockerfile and added a .dockerignore file to enhance image security and reduce attack surface
